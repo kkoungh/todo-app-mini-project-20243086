@@ -3,10 +3,14 @@ import { useEffect, useState } from 'react';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 async function request(path, options = {}) {
+  const headers = { ...(options.headers || {}) };
+
+  if (options.body && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers,
     ...options
   });
 
@@ -71,7 +75,8 @@ export default function App() {
     try {
       setError('');
       const updatedTodo = await request(`/api/todos/${todo._id}/toggle`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({})
       });
       setTodos((current) =>
         current.map((item) => (item._id === updatedTodo._id ? updatedTodo : item))
@@ -85,7 +90,8 @@ export default function App() {
     try {
       setError('');
       await request(`/api/todos/${todoId}/delete`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({})
       });
       setTodos((current) => current.filter((item) => item._id !== todoId));
     } catch (err) {

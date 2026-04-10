@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Todo = require('./models/Todo');
 
 const app = express();
+const router = express.Router();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -29,7 +30,7 @@ async function connectToDatabase() {
   return cachedConnection;
 }
 
-app.get('/api/health', async (req, res) => {
+router.get('/health', async (req, res) => {
   try {
     await connectToDatabase();
     res.json({ ok: true, message: 'Server is running.' });
@@ -38,7 +39,7 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-app.get('/api/todos', async (req, res) => {
+router.get('/todos', async (req, res) => {
   try {
     await connectToDatabase();
     const todos = await Todo.find().sort({ createdAt: -1 });
@@ -48,7 +49,7 @@ app.get('/api/todos', async (req, res) => {
   }
 });
 
-app.post('/api/todos', async (req, res) => {
+router.post('/todos', async (req, res) => {
   try {
     await connectToDatabase();
 
@@ -65,7 +66,7 @@ app.post('/api/todos', async (req, res) => {
   }
 });
 
-app.put('/api/todos/:id', async (req, res) => {
+router.put('/todos/:id', async (req, res) => {
   try {
     await connectToDatabase();
 
@@ -98,7 +99,7 @@ app.put('/api/todos/:id', async (req, res) => {
   }
 });
 
-app.post('/api/todos/:id/toggle', async (req, res) => {
+router.post('/todos/:id/toggle', async (req, res) => {
   try {
     await connectToDatabase();
 
@@ -117,7 +118,7 @@ app.post('/api/todos/:id/toggle', async (req, res) => {
   }
 });
 
-app.delete('/api/todos/:id', async (req, res) => {
+router.delete('/todos/:id', async (req, res) => {
   try {
     await connectToDatabase();
     const todo = await Todo.findByIdAndDelete(req.params.id);
@@ -132,7 +133,7 @@ app.delete('/api/todos/:id', async (req, res) => {
   }
 });
 
-app.post('/api/todos/:id/delete', async (req, res) => {
+router.post('/todos/:id/delete', async (req, res) => {
   try {
     await connectToDatabase();
     const todo = await Todo.findByIdAndDelete(req.params.id);
@@ -146,6 +147,9 @@ app.post('/api/todos/:id/delete', async (req, res) => {
     res.status(500).json({ message: 'Failed to delete todo.' });
   }
 });
+
+app.use('/api', router);
+app.use('/', router);
 
 if (process.env.NODE_ENV !== 'production') {
   connectToDatabase()
