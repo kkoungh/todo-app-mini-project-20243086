@@ -70,9 +70,8 @@ export default function App() {
   async function toggleTodo(todo) {
     try {
       setError('');
-      const updatedTodo = await request(`/api/todos/${todo._id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ completed: !todo.completed })
+      const updatedTodo = await request(`/api/todos/${todo._id}/toggle`, {
+        method: 'POST'
       });
       setTodos((current) =>
         current.map((item) => (item._id === updatedTodo._id ? updatedTodo : item))
@@ -85,8 +84,8 @@ export default function App() {
   async function deleteTodo(todoId) {
     try {
       setError('');
-      await request(`/api/todos/${todoId}`, {
-        method: 'DELETE'
+      await request(`/api/todos/${todoId}/delete`, {
+        method: 'POST'
       });
       setTodos((current) => current.filter((item) => item._id !== todoId));
     } catch (err) {

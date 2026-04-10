@@ -98,7 +98,41 @@ app.put('/api/todos/:id', async (req, res) => {
   }
 });
 
+app.post('/api/todos/:id/toggle', async (req, res) => {
+  try {
+    await connectToDatabase();
+
+    const todo = await Todo.findById(req.params.id);
+
+    if (!todo) {
+      return res.status(404).json({ message: 'Todo not found.' });
+    }
+
+    todo.completed = !todo.completed;
+    await todo.save();
+
+    res.json(todo);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to toggle todo.' });
+  }
+});
+
 app.delete('/api/todos/:id', async (req, res) => {
+  try {
+    await connectToDatabase();
+    const todo = await Todo.findByIdAndDelete(req.params.id);
+
+    if (!todo) {
+      return res.status(404).json({ message: 'Todo not found.' });
+    }
+
+    res.json({ message: 'Todo deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete todo.' });
+  }
+});
+
+app.post('/api/todos/:id/delete', async (req, res) => {
   try {
     await connectToDatabase();
     const todo = await Todo.findByIdAndDelete(req.params.id);
