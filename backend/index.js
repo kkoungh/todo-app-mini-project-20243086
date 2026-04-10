@@ -99,7 +99,7 @@ router.put('/todos/:id', async (req, res) => {
   }
 });
 
-router.post('/todos/:id/toggle', async (req, res) => {
+async function toggleTodoHandler(req, res) {
   try {
     await connectToDatabase();
 
@@ -116,7 +116,10 @@ router.post('/todos/:id/toggle', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Failed to toggle todo.' });
   }
-});
+}
+
+router.get('/todos/:id/toggle', toggleTodoHandler);
+router.post('/todos/:id/toggle', toggleTodoHandler);
 
 router.delete('/todos/:id', async (req, res) => {
   try {
@@ -133,7 +136,7 @@ router.delete('/todos/:id', async (req, res) => {
   }
 });
 
-router.post('/todos/:id/delete', async (req, res) => {
+async function deleteTodoHandler(req, res) {
   try {
     await connectToDatabase();
     const todo = await Todo.findByIdAndDelete(req.params.id);
@@ -146,7 +149,10 @@ router.post('/todos/:id/delete', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete todo.' });
   }
-});
+}
+
+router.get('/todos/:id/delete', deleteTodoHandler);
+router.post('/todos/:id/delete', deleteTodoHandler);
 
 app.use('/api', router);
 app.use('/', router);
