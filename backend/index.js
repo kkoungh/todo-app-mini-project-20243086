@@ -2,8 +2,8 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const Todo = require('./models/Todo');
+const { connectToDatabase } = require('./db');
 
 const app = express();
 const router = express.Router();
@@ -11,24 +11,6 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-
-let cachedConnection = null;
-
-async function connectToDatabase() {
-  if (cachedConnection) {
-    return cachedConnection;
-  }
-
-  if (!process.env.MONGODB_URI) {
-    throw new Error('MONGODB_URI is not set.');
-  }
-
-  cachedConnection = mongoose.connect(process.env.MONGODB_URI, {
-    dbName: 'todoDB'
-  });
-
-  return cachedConnection;
-}
 
 router.get('/health', async (req, res) => {
   try {
