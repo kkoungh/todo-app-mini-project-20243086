@@ -53,30 +53,9 @@ router.post('/todos', async (req, res) => {
   try {
     await connectToDatabase();
 
-    const title = typeof req.body.title === 'string' ? req.body.title.trim() : '';
+    const { action, id, title } = req.body || {};
 
-    if (!title) {
-      return res.status(400).json({ message: 'Title is required.' });
-    }
-
-    const todo = await Todo.create({ title });
-    res.status(201).json(todo);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create todo.' });
-  }
-});
-
-router.post('/todos/action', async (req, res) => {
-  try {
-    await connectToDatabase();
-
-    const { id, type } = req.body || {};
-
-    if (!id || !type) {
-      return res.status(400).json({ message: 'id and type are required.' });
-    }
-
-    if (type === 'toggle') {
+    if (action === 'toggle') {
       const todo = await Todo.findById(id);
 
       if (!todo) {
@@ -89,7 +68,7 @@ router.post('/todos/action', async (req, res) => {
       return res.json(todo);
     }
 
-    if (type === 'delete') {
+    if (action === 'delete') {
       const todo = await Todo.findByIdAndDelete(id);
 
       if (!todo) {
@@ -99,9 +78,16 @@ router.post('/todos/action', async (req, res) => {
       return res.json({ message: 'Todo deleted successfully.', id });
     }
 
-    return res.status(400).json({ message: 'Unsupported action type.' });
+    const normalizedTitle = typeof title === 'string' ? title.trim() : '';
+
+    if (!normalizedTitle) {
+      return res.status(400).json({ message: 'Title is required.' });
+    }
+
+    const todo = await Todo.create({ title: normalizedTitle });
+    res.status(201).json(todo);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to process todo action.' });
+    res.status(500).json({ message: 'Failed to create todo.' });
   }
 });
 
