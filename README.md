@@ -52,5 +52,7 @@ MONGODB_URI=your_mongodb_connection_string
 
 ## 배포 메모
 
-- API 라우트는 `backend/index.js`를 Vercel Node 함수로 사용합니다.
-- 프론트엔드는 Vite 빌드 결과물을 정적 사이트로 배포합니다.
+- Vercel에서는 Root Directory를 저장소 전체로 설정합니다.
+- API는 `api/[...all].js`가 `backend/index.js`를 불러와 서버리스 함수로 처리합니다.
+- 프론트엔드는 `frontend/dist`를 정적 사이트로 배포합니다.
+- Vercel 환경 변수에 `MONGODB_URI`를 반드시 추가해야 합니다.
