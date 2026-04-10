@@ -66,6 +66,45 @@ router.post('/todos', async (req, res) => {
   }
 });
 
+router.post('/todos/action', async (req, res) => {
+  try {
+    await connectToDatabase();
+
+    const { id, type } = req.body || {};
+
+    if (!id || !type) {
+      return res.status(400).json({ message: 'id and type are required.' });
+    }
+
+    if (type === 'toggle') {
+      const todo = await Todo.findById(id);
+
+      if (!todo) {
+        return res.status(404).json({ message: 'Todo not found.' });
+      }
+
+      todo.completed = !todo.completed;
+      await todo.save();
+
+      return res.json(todo);
+    }
+
+    if (type === 'delete') {
+      const todo = await Todo.findByIdAndDelete(id);
+
+      if (!todo) {
+        return res.status(404).json({ message: 'Todo not found.' });
+      }
+
+      return res.json({ message: 'Todo deleted successfully.', id });
+    }
+
+    return res.status(400).json({ message: 'Unsupported action type.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to process todo action.' });
+  }
+});
+
 router.put('/todos/:id', async (req, res) => {
   try {
     await connectToDatabase();
