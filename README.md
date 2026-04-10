@@ -6,6 +6,7 @@
 
 ```text
 todo-app/
+|- api/        # Vercel serverless entry
 |- frontend/   # React + Vite
 |- backend/    # Express + MongoDB Atlas
 |- vercel.json
@@ -21,14 +22,15 @@ todo-app/
 
 ## 실행 방법
 
-1. 백엔드 의존성 설치
-   `npm.cmd install --prefix backend`
-2. 프론트엔드 의존성 설치
-   `npm.cmd install --prefix frontend`
-3. 백엔드 실행
-   `npm.cmd run dev:backend`
-4. 프론트엔드 실행
-   `npm.cmd run dev:frontend`
+1. 루트에서 전체 의존성 설치
+   `npm.cmd run install:all`
+2. 루트에서 프론트엔드 + 백엔드 동시 실행
+   `npm.cmd run dev`
+
+개별 실행이 필요하면 아래 명령을 사용하면 됩니다.
+
+- 백엔드만 실행: `npm.cmd run dev:backend`
+- 프론트엔드만 실행: `npm.cmd run dev:frontend`
 
 프론트엔드는 `/api` 요청을 `http://localhost:5000`으로 프록시합니다.
 
